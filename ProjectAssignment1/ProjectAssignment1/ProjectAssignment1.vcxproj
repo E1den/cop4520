@@ -126,6 +126,7 @@
     <ClCompile Include="main.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="mrlock_mcas.h" />
     <ClInclude Include="seq_mcas.h" />
   </ItemGroup>
   <ItemGroup>

@@ -1,33 +1,39 @@
 #pragma once
 #include <atomic>
 #include <memory>
+#include "mrlock.h"
 
 struct casRow {
 	long *address;
 	long expectedValue;
 	long newValue;
+	uint32_t handle;
 };
 
 class seq_mcas
 {
 public:
-	inline static void complete(casRow* start, casRow* last)
+	inline static void complete(casRow* start, casRow* last, MRLock<casRow*>& m)
 	{
-		//in reality check if each is a descriptor them replace it with the proper value in a cas
 		for (casRow* runner = start; runner <= last; runner++)
+		{
 			(*runner->address) = runner->newValue;
+			m.Unlock(runner->handle);
+		}
 	}
 
 	inline static void invokeMcas(casRow* start, casRow* last)
 	{
+		MRLock<casRow*> m = MRLock<casRow*>(0x1);
+
+
 		for (casRow* runner = start; runner<=last; runner ++)
 		{
-			//in reality do a cas here to install descriptor pointer into *runner, essentailly locking it to this thread until replaced
+			runner->handle = m.Lock(runner);
 			if (*runner->address != runner->expectedValue)
 				return;
 		}
 		//at this point all are equal, modify them to the new values
-		complete(start, last);
+		complete(start, last,m);
 	}
-
 };

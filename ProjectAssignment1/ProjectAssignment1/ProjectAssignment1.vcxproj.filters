@@ -23,6 +23,9 @@
     <ClInclude Include="seq_mcas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mrlock_mcas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xsd Include=".gitignore">
